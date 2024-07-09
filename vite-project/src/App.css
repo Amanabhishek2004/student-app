@@ -1,0 +1,55 @@
+.col{
+    margin-top: 8rem;
+    margin-right:20rem;
+    margin-left: 20rem;
+    height: 20rem;
+}
+
+.btn{
+    margin-right:1rem;  
+    border-radius: 5px;
+}
+.container{
+    background-color: blueviolet;
+    border-radius: 5px;
+}
+
+.all-assignmnets{
+
+    margin-left: 19rem;
+    margin-right: 19rem;
+}
+
+.gap-top{
+    margin-left: 118px;
+}
+
+.container{
+    background-color: rgb(129, 50, 103);
+}
+
+.all-data{
+    margin-left: 12rem;
+    margin-right: 12rem;
+}
+
+.container-course{
+ 
+    margin-left: 8rem;
+    margin-right: 8rem;
+}
+
+.create-btn{
+    margin-left: 50rem;
+}
+
+.form-cont{
+    margin-top: 3rem;
+    margin-left:10rem;
+    margin-right: 30rem;  
+}
+
+.login-submit{
+    margin-left: 60rem;
+    margin-top: 3rem;
+}

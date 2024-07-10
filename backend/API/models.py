@@ -1,8 +1,8 @@
 from typing import Iterable
 from django.db import models
-from django.dispatch import receiver
+from django.dispatch import receiver 
 from django.utils import timezone
-from django.db.models.signals import pre_save , post_save
+from django.db.models.signals import pre_save , post_save ,m2m_changed
 from django.contrib.auth.models import User
 import datetime
 
@@ -16,7 +16,7 @@ class Subject(models.Model):
 class Student(models.Model):
       name = models.ForeignKey(User , on_delete=models.CASCADE  ,null = True , blank = True)
       attendance_status = models.CharField(max_length=7)
-      attendance = models.ManyToManyField("Attendance" , related_name = "attandance_data" ,null = True , blank =True)
+      attendance = models.ManyToManyField("Attendance" , related_name = "attandance_data",blank =True)
       subjects = models.ManyToManyField(Subject)
 
       def __str__(self) -> str:
@@ -24,11 +24,19 @@ class Student(models.Model):
       
 
 @receiver(post_save, sender=Student)
-def _post_save_receiver(sender,instance,created , **kwargs):
-      if created:
-         for i in instance.subjects.all():
-            val =  Attendance.objects.create(student = instance , subject = i)
+def _post_save_receiver(sender, instance, created, **kwargs):
+    if created:
+        # Many-to-many relationships aren't saved yet, so this will be empty
+        pass
+
+
+@receiver(m2m_changed, sender=Student.subjects.through)
+def subjects_changed(sender, instance, action, **kwargs):
+    if action == "post_add":
+        for subject in instance.subjects.all():
+            val = Attendance.objects.create(student=instance, subject=subject)
             instance.attendance.add(val)
+        instance.save()
 
 
 class staff_data(models.Model):
@@ -61,6 +69,7 @@ def _post_save_assignment(sender,instance,created,**kwargs):
              assignmnets = Assignmnet_given_by_teacher.objects.filter(teacher_name = instance.submitted_to.teacher_name)
              val = Assignmnet_given_by_teacher.objects.filter(subject = instance.subject).first()
              val.data.add(instance)  
+             val.save()
 
 
 

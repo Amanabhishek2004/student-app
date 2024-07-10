@@ -17,6 +17,16 @@ class StudentListCreateView(generics.ListAPIView):
       queryset = Student.objects.all()
       serializer_class = StudentReadSerializer
 
+      def get_queryset(self):
+        #  if student 
+        user_id = self.request.GET.get("user_id")
+        print(user_id)
+        if user_id: 
+         user = User.objects.get(id = int(user_id))
+         if Student.objects.filter(name = user).exists():
+              print(Student.objects.filter(name = user))
+              return Student.objects.filter(name = user)
+        return super().get_queryset() 
 
 class AssignmentViewAPI(generics.ListAPIView ,generics.CreateAPIView):
       queryset = assignements.objects.all()
@@ -42,8 +52,7 @@ class AssignmentViewAPI(generics.ListAPIView ,generics.CreateAPIView):
            
            subject = (self.request.GET.get("subject"))
            submitted_to = (self.request.GET.get("submitted_to"))
-           print(subject)
-           print(submitted_to)
+
            if subject:
                 subject = Subject.objects.get(id = int(subject))
 
@@ -63,10 +72,21 @@ class AssignmnetUpdateDestroyAPI(generics.RetrieveUpdateDestroyAPIView):
       queryset = assignements.objects.all()
       serializer_class = AssignmentSerializer
 
+      def update(self, request, *args, **kwargs):
+           if request.GET.get("user_id"):
+               user  = User.objects.get(id = int(request.GET.get("user_id")))
+               if assignements.objects.filter(student__name = user ).exists():
+                       
+                       return super().update(request, *args, **kwargs)
+           else:
+                return Response({
+                     "Message": "Not allowed"
+                })    
+      
 
 class AssignmentGivenDataAPI(generics.ListAPIView , generics.CreateAPIView):
     
-    # This route will be designed both ways for listing all the data as well as listing specific subject data
+   # This route will be designed both ways for listing all the data as well as listing specific subject data
      
       queryset = Assignmnet_given_by_teacher.objects.all()
       serializer_class = AssignmentGivenDataSerializer
@@ -74,13 +94,22 @@ class AssignmentGivenDataAPI(generics.ListAPIView , generics.CreateAPIView):
       def get_queryset(self):
             
             subject = self.request.GET.get("subject")
+            user_id = self.request.GET.get("user_id") 
+            print(user_id)
 
-            # submitted_to = self.request.GET.get("submitted_to")
-
+            staff = None
             querysets = Assignmnet_given_by_teacher.objects.all()
+
+            if user_id:
+               user = User.objects.get(id=int(user_id)) 
+               staff = staff_data.objects.filter(name= user)
+               if staff.exists():
+                   querysets = querysets.filter(teacher_name = staff)   
+
             if subject:
                   subject_obj = Subject.objects.get(id = int(subject))
-                  querysets = Assignmnet_given_by_teacher.objects.filter(subject = subject_obj)
+                  querysets = querysets.filter(subject = subject_obj)
+            
             
             return querysets
 
@@ -88,9 +117,9 @@ class MarkAttendanceAPI(generics.RetrieveUpdateAPIView):
 
       queryset = Attendance.objects.all()
       serializer_class = AttendanceSerializer
-      # print(self.request)
+
       def update(self, request, *args, **kwargs):
-      #     print(request.user)
+
           if staff_data.objects.filter(name = request.user).exists():  
              subject = self.request.GET.get("sub")
              student = self.request.GET.get("stu")
@@ -110,7 +139,7 @@ class MarkAttendanceAPI(generics.RetrieveUpdateAPIView):
                       obj.status = data
                       obj.save()
              if data !=obj.status:
-                  # if datetime.date.today() == obj.updated_attendance:
+        
                   obj.status = data                  
                   if data == 0:   
                       obj.no_of_classes_attended-=1      
@@ -129,7 +158,6 @@ class MarkAttendanceAPI(generics.RetrieveUpdateAPIView):
 
 
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.sessions.models import Session
 from django.shortcuts import get_object_or_404
@@ -143,6 +171,7 @@ import datetime
 @csrf_exempt
 @api_view(['POST'])
 def logi_user_view(request):
+
     if request.method == 'POST':
         if request.content_type == 'multipart/form-data':
             data = request.POST.dict()
@@ -157,40 +186,20 @@ def logi_user_view(request):
                 student = get_object_or_404(Student, name=user)
                 login(request, user)
 
-                # Create a new session
-                session = Session()
-                session.session_key = Session.objects.get_new_session_key()
-                session.expire_date = datetime.datetime.now() + datetime.timedelta(days=7)  # Set expiration date
-                session_data = {
-                    'user_id': user.id,
-                    'test_key': 'test_value'  # test key-value pair
-                }
-                session.session_data = Session.objects.encode(session_data)
-                session.save()  # Save the session to generate a session key
-                
-                # Associate session with the request
-                request.session = session_data
-                request.session['session_key'] = session.session_key
-
-                print("Login successfully done!")
-                print("Session Key:", session.session_key)
-                print("Session Data:", session_data)
-                
                 response_data = {
                     "STAFF_STATUS": False,
                     "ID": student.pk,
                     "USERNAME": student.name.username,
-                    "session_key": session.session_key  # Include session key in response
                 }
-                return JsonResponse(response_data)
+                return Response(response_data)
             else:
-                return JsonResponse({
+                return Response({
                     "Error": "Invalid username or password"
                 }, status=401)
         else:
-            return JsonResponse({
+            return Response({
                 "Error": serialized_data.errors
             }, status=400)
-
+ 
 
 

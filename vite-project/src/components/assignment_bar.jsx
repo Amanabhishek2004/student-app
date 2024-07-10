@@ -8,13 +8,13 @@ const Assignment_bar = ({ data }) => {
     const [file, setfile] = useState(null)
     const file_data = useRef(null)
 
-    const handleSubmission = (id) => {
-        // Perform any local state update or validation if needed before calling handlePatchRequest
+    const handleSubmission = (id) =>{
+        const form = new FormData()       
+        form.append("is_draft" , "False")
+        handlePatchRequest(form , id)
+    }
 
-
-
-
-        // Create FormData object to send file data
+    const handleEdit = (id) => {
         if (file) {
 
             const formData = new FormData();
@@ -40,8 +40,8 @@ const Assignment_bar = ({ data }) => {
                 <p className="pb-3 mb-0 small lh-sm ">
                     <strong className="d-block text-gray-dark">@{data.id}</strong>
                     Assignmnet --- {data.file_name}
-                    <button type="button" className={`btn btn-outline-success gap-top ${data.is_draft === 'False' ? "disabled" : ''}`} onClick={(event) => handleSubmission(event, data.id)}>SUBMIT</button>
-                    <button type="button" className={`btn btn-outline-danger ${data.is_draft === 'False' ? "disabled" : ''}`} onClick={() => handleSubmission(data.id)} >EDIT</button>
+                    <button type="button" className={`btn btn-outline-success gap-top ${data.is_draft === 'False' ? "disabled" : ''}`} onClick={(event) => handleSubmission( data.id)}>SUBMIT</button>
+                    <button type="button" className={`btn btn-outline-danger ${data.is_draft === 'False' ? "disabled" : ''}`} onClick={(event) => handleEdit( data.id)}>EDIT</button>
                 </p>
             </div>
             <div className="mb-3">

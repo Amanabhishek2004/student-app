@@ -80,7 +80,8 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
     const[submitted_to , setsubmitted_to] = useState(null)
     // create assignment_given 
     const handleCreateAssignment = (data)=>{
-        const url = 'http://127.0.0.1:8000/api/assignmnets/'
+      if (loginUser){       
+        const url = `http://127.0.0.1:8000/api/assignmnets/?${loginUser.ID}`
 
         fetch(url , {
             method : 'POST',
@@ -99,12 +100,12 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
         }).catch(error => {
             console.error("POST failed" , error)
         })
-        return messages
+        return messages}
     }
 
 
     const handlePatchRequest = (data, id) => {
-      const url = `http://localhost:8000/api/assignmnets/RUD/${id}`;
+      const url = `http://localhost:8000/api/assignmnets/RUD/${id}?user_id=${loginUser.ID}`;
 
       
       fetch(url, {
@@ -128,8 +129,8 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
   };
   useEffect(() => {
     const fetchData = () => {
-        if (subject != null && submitted_to != null) {
-            fetch(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}`)
+        if (subject != null && submitted_to != null && loginUser) {
+            fetch(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}&user_id=${loginUser.ID}`)
                 .then(response => {
                     if (response.ok) {
                         return response.json();
@@ -144,39 +145,42 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
                     console.error('Error:', error);
                 });
         
-            console.log(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}`);
+            console.log(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}user_id=${loginUser.ID}`);
         } 
         else {
-            fetch(`http://localhost:8000/api/assignmnets/`) 
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
+          if(loginUser){
+
+              fetch(`http://localhost:8000/api/assignmnets/?user_id=${loginUser.ID}`) 
+              .then(response => {
+                  if (response.ok) {
+                      return response.json();
                     } else {
                         throw new Error('Network response was not ok');
                     }
                 })
                 .then(data => setAssignments(data))
                 .catch(error => console.error('Error:', error));
+            }  
         }
     };
 
     fetchData();
-}, [subject, submitted_to]); // Ensure only relevant dependencies are included
+}, [subject, submitted_to, loginUser]); // Ensure only relevant dependencies are included
 
 
     
         useEffect(() => {
-
-                fetch('http://127.0.0.1:8000/api/given_assignments/') 
-                    .then(response => response.json())
-                    .then(data => setAssignments_given(data))
-                    .catch(error => console.error('Error:', error));
+            if (loginUser){
+                
+                fetch(`http://127.0.0.1:8000/api/given_assignments/?user_id=${loginUser.ID}`) 
+                .then(response => response.json())
+                .then(data => setAssignments_given(data))
+                .catch(error => console.error('Error:', error));
+            }
             
-        }, []);
+        }, [loginUser]);
 
 
-
-    
 
     return (
         <Assignment_context.Provider value={{ assignments, setAssignments, assignments_given, setAssignments_given, param, setParam ,handlePatchRequest ,filename ,setfilename , handleCreateAssignment , unread_message ,setunread_message,setsubject ,setsubmitted_to, subject , submitted_to}}>

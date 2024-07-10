@@ -32,6 +32,10 @@ const Login = () => {
   // }, [username]);
 
   return (
+    <>
+    <h1 style={{"color":"white",
+      "marginLeft": "28rem"
+    }}>Login user</h1>
     <form onSubmit={handleSubmit}>
       <div className='form-cont'>
         <div className="input-group has-validation">
@@ -44,7 +48,7 @@ const Login = () => {
               placeholder="Username" 
               required 
               onChange={(event) => setUsername(event.target.value)} 
-            />
+              />
             <label htmlFor="floatingInputGroup2">Username</label>
           </div>
           <div className="invalid-feedback">
@@ -63,13 +67,14 @@ const Login = () => {
               placeholder="Password" 
               required 
               ref={passwordRef} 
-            />
+              />
             <label htmlFor="floatingInputGroup2_">Password</label>
           </div>
         </div>
       </div>
       <button className='login-submit btn btn-outline-primary' type="submit">Submit</button>
     </form>
+              </>
   );
 };
 

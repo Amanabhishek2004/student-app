@@ -143,7 +143,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    # add other backends here if necessary
+ 
 ]
 
 CSRF_COOKIE_SAMESITE = "Strict"

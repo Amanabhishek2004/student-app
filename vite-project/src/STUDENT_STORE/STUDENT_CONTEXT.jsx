@@ -18,20 +18,23 @@ const STUDENT_CONTEXT_PROVIDER = ({ children }) => {
     const [Students, setStudents] = useState([]);
     const  {loginUser} = useContext(UserContext)
     useEffect(() => {
-        fetch('http://localhost:8000/api/students/') 
+        // console.log(`http://localhost:8000/api/students/?user_id=${loginUser.ID}`)
+        if (loginUser){
+            fetch(`http://localhost:8000/api/students/?user_id=${loginUser.ID}`) 
             .then(response => response.json())
             .then(data => {
                 console.log(data)
                 setStudents(data)
             })
             .catch(error => console.error('Error:', error));
-    }, [class_attended])
+        }
+    }, [class_attended , loginUser])
 
     
 
     const MarkAttendance = (id , val ,data) =>{
         
-        const  url = `http://127.0.0.1:8000/api/Mark-Attendance/${id}/?sub=${data.subject_name}&stu=AMAN&data=${val}`
+        const  url = `http://127.0.0.1:8000/api/Mark-Attendance/${id}/?sub=${data.subject_name}&stu=AMAN&data=${val}&user_id=${loginUser.ID}`
          fetch(url , {
              method :"PATCH",
 

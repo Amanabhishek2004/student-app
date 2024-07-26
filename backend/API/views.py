@@ -20,13 +20,18 @@ class StudentListCreateView(generics.ListAPIView):
       def get_queryset(self):
         #  if student 
         user_id = self.request.GET.get("user_id")
+
         print(user_id)
         if user_id: 
-         user = User.objects.get(id = int(user_id))
+         user = User.objects.get(username = user_id)
+         staff = staff_data.objects.filter(name = user)
+         
+         print(user.pk)
+         if staff.exists():
+            return Student.objects.all()
          if Student.objects.filter(name = user).exists():
               print(Student.objects.filter(name = user))
               return Student.objects.filter(name = user)
-        return super().get_queryset() 
 
 class AssignmentViewAPI(generics.ListAPIView ,generics.CreateAPIView):
       queryset = assignements.objects.all()
@@ -74,7 +79,7 @@ class AssignmnetUpdateDestroyAPI(generics.RetrieveUpdateDestroyAPIView):
 
       def update(self, request, *args, **kwargs):
            if request.GET.get("user_id"):
-               user  = User.objects.get(id = int(request.GET.get("user_id")))
+               user  = User.objects.get(username = (request.GET.get("user_id")))
                if assignements.objects.filter(student__name = user ).exists():
                        
                        return super().update(request, *args, **kwargs)
@@ -101,14 +106,16 @@ class AssignmentGivenDataAPI(generics.ListAPIView , generics.CreateAPIView):
             querysets = Assignmnet_given_by_teacher.objects.all()
 
             if user_id:
-               user = User.objects.get(id=int(user_id)) 
+               user = User.objects.get(username=user_id) 
                staff = staff_data.objects.filter(name= user)
                if staff.exists():
-                   querysets = querysets.filter(teacher_name = staff)   
+                   print(staff)
+                   querysets = Assignmnet_given_by_teacher.objects.filter(teacher_name = staff.first())  
+                   print(querysets) 
 
             if subject:
                   subject_obj = Subject.objects.get(id = int(subject))
-                  querysets = querysets.filter(subject = subject_obj)
+                  querysets = Assignmnet_given_by_teacher.objects.filter(subject = subject_obj)
             
             
             return querysets
@@ -119,8 +126,10 @@ class MarkAttendanceAPI(generics.RetrieveUpdateAPIView):
       serializer_class = AttendanceSerializer
 
       def update(self, request, *args, **kwargs):
-
-          if staff_data.objects.filter(name = request.user).exists():  
+          
+          user_id = request.GET.get("user_id")
+          user_id = User.objects.get(username = user_id)
+          if staff_data.objects.filter(name = user_id).exists():  
              subject = self.request.GET.get("sub")
              student = self.request.GET.get("stu")
              data = int(self.request.GET.get("data"))
@@ -188,7 +197,7 @@ def logi_user_view(request):
 
                 response_data = {
                     "STAFF_STATUS": False,
-                    "ID": student.pk,
+                    "ID": user.pk,
                     "USERNAME": student.name.username,
                 }
                 return Response(response_data)

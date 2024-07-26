@@ -81,7 +81,7 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
     // create assignment_given 
     const handleCreateAssignment = (data)=>{
       if (loginUser){       
-        const url = `http://127.0.0.1:8000/api/assignmnets/?${loginUser.ID}`
+        const url = `http://127.0.0.1:8000/api/assignmnets/?${loginUser.USERNAME}`
 
         fetch(url , {
             method : 'POST',
@@ -105,7 +105,7 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
 
 
     const handlePatchRequest = (data, id) => {
-      const url = `http://localhost:8000/api/assignmnets/RUD/${id}?user_id=${loginUser.ID}`;
+      const url = `http://localhost:8000/api/assignmnets/RUD/${id}?user_id=${loginUser.USERNAME}`;
 
       
       fetch(url, {
@@ -130,7 +130,7 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
   useEffect(() => {
     const fetchData = () => {
         if (subject != null && submitted_to != null && loginUser) {
-            fetch(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}&user_id=${loginUser.ID}`)
+            fetch(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}&user_id=${loginUser.USERNAME}`)
                 .then(response => {
                     if (response.ok) {
                         return response.json();
@@ -145,12 +145,12 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
                     console.error('Error:', error);
                 });
         
-            console.log(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}user_id=${loginUser.ID}`);
+            console.log(`http://localhost:8000/api/assignmnets/?subject=${subject}&submitted_to=${submitted_to}user_id=${loginUser.USERNAME}`);
         } 
         else {
           if(loginUser){
 
-              fetch(`http://localhost:8000/api/assignmnets/?user_id=${loginUser.ID}`) 
+              fetch(`http://localhost:8000/api/assignmnets/?user_id=${loginUser.USERNAME}`) 
               .then(response => {
                   if (response.ok) {
                       return response.json();
@@ -172,7 +172,7 @@ export const ASSIGNMENT_CONTEXT_PROVIDER = ({ children }) => {
         useEffect(() => {
             if (loginUser){
                 
-                fetch(`http://127.0.0.1:8000/api/given_assignments/?user_id=${loginUser.ID}`) 
+                fetch(`http://127.0.0.1:8000/api/given_assignments/?user_id=${loginUser.USERNAME}`) 
                 .then(response => response.json())
                 .then(data => setAssignments_given(data))
                 .catch(error => console.error('Error:', error));

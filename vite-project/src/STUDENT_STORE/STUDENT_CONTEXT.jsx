@@ -20,7 +20,7 @@ const STUDENT_CONTEXT_PROVIDER = ({ children }) => {
     useEffect(() => {
         // console.log(`http://localhost:8000/api/students/?user_id=${loginUser.ID}`)
         if (loginUser){
-            fetch(`http://localhost:8000/api/students/?user_id=${loginUser.ID}`) 
+            fetch(`http://localhost:8000/api/students/?user_id=${loginUser.USERNAME}`) 
             .then(response => response.json())
             .then(data => {
                 console.log(data)

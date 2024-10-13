@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.db.models.signals import pre_save , post_save ,m2m_changed
 from django.contrib.auth.models import User
-import datetime
+
 
 class Subject(models.Model):
       name = models.CharField(max_length=20)
@@ -26,8 +26,11 @@ class Student(models.Model):
 @receiver(post_save, sender=Student)
 def _post_save_receiver(sender, instance, created, **kwargs):
     if created:
-        # Many-to-many relationships aren't saved yet, so this will be empty
-        pass
+        for i in Subject.objects.all():
+            attendance_obj =  Attendance.objects.create(subject = i , student = instance)   
+            instance.subjects.add(i)
+            instance.attendance.add(attendance_obj)
+        instance.save()
 
 
 @receiver(m2m_changed, sender=Student.subjects.through)
@@ -55,6 +58,7 @@ class assignements(models.Model):
       subject = models.ForeignKey(Subject , null = True , on_delete = models.CASCADE)
       is_draft = models.CharField( max_length = 24 , null = True)
       created_at = models.DateTimeField(auto_now_add=True , null = True)
+      submission_date = models.DateField(auto_now_add=True , null = True , blank=True)
 
 
       def __str__(self) -> str:
@@ -105,6 +109,7 @@ class Attendance(models.Model):
         if self.pk is not None:
             self.subject.save()
 
+
     def __str__(self):
         return f"{self.student}----{self.subject}------{self.no_of_classes_attended}"
 
@@ -123,7 +128,8 @@ class Assignmnet_given_by_teacher(models.Model):
       teacher_name = models.ForeignKey(staff_data , on_delete = models.CASCADE)
       data = models.ManyToManyField(assignements , blank = True)
       subject = models.ForeignKey(Subject , on_delete = models.CASCADE)
-
+      Deadline = models.DateField(null = True , blank=True)
+      
 
       def __str__(self) -> str:
             return f"{self.teacher_name.name.username} -----------> {self.subject}---------->{self.pk}"
@@ -134,7 +140,6 @@ class Assignment_uploaded(models.Model):
 
       def __str__(self) -> str:
             return f"{self.name.name.username}"
-
 
 @receiver(post_save, sender=Assignmnet_given_by_teacher)
 def _post_save_assignment(sender,instance,created,**kwargs):
@@ -147,8 +152,6 @@ def _post_save_assignment(sender,instance,created,**kwargs):
                  obj = Assignment_uploaded.objects.create(name = instance.teacher_name) 
                  obj.For_data.add(instance)
                  obj.save()
-
-
 
 
 """              

@@ -16,14 +16,7 @@ const Given_Assignments = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  useEffect(() => {
-    if (loginUser.STAFF_STATUS) {
-      const filtered_assignments = assignments_given.filter(
-        (assignment) => assignment.teacher_name.id === loginUser.ID
-      );
-      setAssignments_given(filtered_assignments);
-    }
-  }, [loginUser, assignments_given, setAssignments_given]);
+
 
   const handleSubmit = (event, assignment) => {
     event.preventDefault();
@@ -47,7 +40,6 @@ const Given_Assignments = () => {
     if (message){
       alert(message)
     }
-    // console.log(message)
     handleClose();
   };
 
@@ -55,8 +47,10 @@ const Given_Assignments = () => {
     <div>
       {assignments_given.map((assignment, id) => (
         <div key={id} className="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
-          <div className="list-group">
-            <a href="#" className="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+          <div className="bg-dark list-group">
+            <a href="#" className="bg-dark list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true" style={{
+                        "color":"white"
+                    }}>
               <img src="https://github.com/twbs.png" alt="twbs" width="32" height="32" className="rounded-circle flex-shrink-0" />
               <div className="d-flex gap-2 w-100 justify-content-between">
                 <div>
@@ -66,7 +60,9 @@ const Given_Assignments = () => {
                 <small className="opacity-50 text-nowrap">now</small>
               </div>
             </a>
-            <a href="#" className="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+            <a href="#" className="bg-dark list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true"style={{
+                        "color":"white"
+                    }}>
               <img src="https://github.com/twbs.png" alt="twbs" width="32" height="32" className="rounded-circle flex-shrink-0" />
               <div className="d-flex gap-2 w-100 justify-content-between">
                 <div>
@@ -76,14 +72,15 @@ const Given_Assignments = () => {
                 <small className="opacity-50 text-nowrap">3d</small>
               </div>
             </a>
-            <a href="#" className="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+            <a href="#" className="bg-dark list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true" style={{
+                        "color":"white"
+                    }}>
               <div className="d-flex gap-2 w-100 justify-content-between">
                 <div>
                   <Link to={`http://localhost:5173/assignmnets`}>
                     <button type="button" className="btn btn-outline-info" onClick={()=>{setsubject(assignment.subject)
                     console.log(assignment)
                       setsubmitted_to(assignment.id)
-                      console.log("done")
                     }}>View-Submissions</button>
                   </Link>
                   {!loginUser.STAFF_STATUS && (

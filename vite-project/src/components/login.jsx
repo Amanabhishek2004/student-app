@@ -14,8 +14,8 @@ const Login = () => {
     const formdata = new FormData()
 
     if (username && password) {
-      formdata.append("Username" , username)
-      formdata.append("Password" , password)
+      formdata.append("username" , username)
+      formdata.append("password" , password)
       Login(formdata);
     }
   };
@@ -33,47 +33,47 @@ const Login = () => {
 
   return (
     <>
-    <h1 style={{"color":"white",
-      "marginLeft": "28rem"
-    }}>Login user</h1>
-    <form onSubmit={handleSubmit}>
-      <div className='form-cont'>
-        <div className="input-group has-validation">
-          <span className="input-group-text">@</span>
-          <div className="form-floating is-invalid">
-            <input 
-              type="text" 
-              className="form-control is-invalid" 
-              id="floatingInputGroup2" 
-              placeholder="Username" 
-              required 
-              onChange={(event) => setUsername(event.target.value)} 
-              />
-            <label htmlFor="floatingInputGroup2">Username</label>
+    <div className='login-card'>
+      <h1>Login User</h1>
+      <form onSubmit={handleSubmit}>
+        <div className='input-box'>
+          <div className="input-group has-validation">
+            <span className="input-group-text">@</span>
+            <div className="form-floating is-invalid">
+              <input 
+                type="text" 
+                className="form-control is-invalid" 
+                id="floatingInputGroup2" 
+                placeholder="Username" 
+                required 
+                onChange={(event) => setUsername(event.target.value)} 
+                />
+              <label htmlFor="floatingInputGroup2">Username</label>
+            </div>
+            <div className="invalid-feedback">
+              {error}
+            </div>
           </div>
-          <div className="invalid-feedback">
-            {error}
+          <br />
+          <br />
+          <div className="input-group has-validation">
+            <span className="input-group-text">@</span>
+            <div className="form-floating is-invalid">
+              <input 
+                type="password" 
+                className="form-control is-invalid" 
+                id="floatingInputGroup2_" 
+                placeholder="Password" 
+                required 
+                ref={passwordRef} 
+                />
+              <label htmlFor="floatingInputGroup2_">Password</label>
+            </div>
           </div>
         </div>
-        <br />
-        <br />
-        <div className="input-group has-validation">
-          <span className="input-group-text">@</span>
-          <div className="form-floating is-invalid">
-            <input 
-              type="password" 
-              className="form-control is-invalid" 
-              id="floatingInputGroup2_" 
-              placeholder="Password" 
-              required 
-              ref={passwordRef} 
-              />
-            <label htmlFor="floatingInputGroup2_">Password</label>
-          </div>
-        </div>
+        <button className='btn btn-outline-primary' type="submit">Submit</button>
+      </form>
       </div>
-      <button className='login-submit btn btn-outline-primary' type="submit">Submit</button>
-    </form>
               </>
   );
 };

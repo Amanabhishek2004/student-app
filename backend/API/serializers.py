@@ -133,7 +133,7 @@ class AssignmentGivenDataSerializer(serializers.ModelSerializer):
 
        class Meta:
            model = Assignmnet_given_by_teacher
-           fields = ['id',"title" ,"teacher_name", "teacher_data","data" , "id" , "subject"]    
+           fields = ['id',"title" ,"teacher_name", "teacher_data","data" , "id" , "subject" , "Deadline"]    
 
 
        def get_data(self , obj):

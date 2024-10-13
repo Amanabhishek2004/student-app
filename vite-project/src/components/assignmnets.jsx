@@ -46,15 +46,17 @@ const Assignments = () => {
                     </div>
                 </div>
             </div>
-            <div className='all-data'>
-                <div className="my-3 p-3 bg-body rounded shadow-sm">
-                    <h6 className="border-bottom pb-2 mb-0">Recent updates</h6>
+            <div className='bg-dark all-data'>
+                <div className="my-3 p-3 rounded shadow-sm">
+                    <h6 className="bg-dark border-bottom pb-2 mb-0" style={{
+                        "color":"white"
+                    }}>Recent updates</h6>
                     {assignments.map((data, index) => (
                         <div key={index}>
                             <Assignment_bar data={data} />
                         </div>
                     ))}
-                    <small className="d-block text-end mt-3">
+                    <small className="bg-dark d-block text-end mt-3">
                         <a href="#">All updates</a>
                     </small>
                 </div>     

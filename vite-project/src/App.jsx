@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Navbar from './components/navbar';
 import Cards from './components/cards';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,6 +10,9 @@ import USER_CONTEXT_PROVIDER, { UserContext } from './STUDENT_STORE/USER_CONTEXT
 import Given_Assignments from './components/Given_Assignments';
 import Courses from './components/courses';
 import Login from './components/login';
+import Footer from './components/footer';
+import Signup from './components/signup';
+import Due_assignment from './components/due_assignment';
 
 function App() {
   return (
@@ -19,6 +22,7 @@ function App() {
           <Router>
             <Navbar />
             <AppRoutes />
+            {/* <Footer /> */}
           </Router>
         </STUDENT_CONTEXT_PROVIDER>
       </ASSIGNMENT_CONTEXT_PROVIDER>
@@ -27,8 +31,17 @@ function App() {
 }
 
 const AppRoutes = () => {
-  const { isLoggedIn } = useContext(UserContext);
-  console.log(isLoggedIn)
+  const { Authtoken, isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+  useEffect(() => {
+
+    if (Authtoken) {
+      setIsLoggedIn(true)
+    }
+    else {
+      setIsLoggedIn(false)
+    }
+  })
+
   return (
     <Routes>
       <Route path="/" element={isLoggedIn ? <Cards /> : <Navigate to="/login" />} />
@@ -36,6 +49,10 @@ const AppRoutes = () => {
       <Route path="/courses" element={isLoggedIn ? <Courses /> : <Navigate to="/login" />} />
       <Route path="/assignment-given" element={isLoggedIn ? <Given_Assignments /> : <Navigate to="/login" />} />
       <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
+      <Route path="/signup" element={isLoggedIn ? <Navigate to="/" />:<Signup />} />
+      <Route path="/dueass" element={isLoggedIn ? <Due_assignment/>:<Navigate to="/login" />} />
+
+  
     </Routes>
   );
 }
